@@ -126,13 +126,13 @@ resource "kubernetes_deployment" "minio" {
             mount_path = "/data"
           }
           resources {
-            limits = {
-              cpu    = "1024m"
+            requests = {
+              cpu    = "1000m"
               memory = "1024Mi"
             }
-            requests = {
-              cpu    = "1536m"
-              memory = "1536Mi"
+            limits = {
+              cpu    = "1512m"
+              memory = "2048Mi"
             }
           }
         }

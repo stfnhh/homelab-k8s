@@ -85,7 +85,7 @@ resource "kubernetes_deployment" "ariang" {
               path = "/"
               port = 8080
             }
-            initial_delay_seconds = 5
+            initial_delay_seconds = 15
             period_seconds        = 10
             timeout_seconds       = 3
             failure_threshold     = 3
