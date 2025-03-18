@@ -17,6 +17,15 @@ jobs:
         run: |
           curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
 
+      - name: Create terraform.tfvars
+        run: |
+          echo """
+            domain = "example.com"
+            email = "test@example.com"
+            nfs_server_ip = "127.0.0.1"
+            zone_id = "ZYX12345678910"
+          """ > terraform.tfvars
+
       - name: Run tflint
         run: |
           tflint --init
