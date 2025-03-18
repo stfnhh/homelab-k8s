@@ -50,7 +50,7 @@ resource "kubernetes_deployment" "jellyfin" {
         container {
           name  = "jellyfin"
           image = "jellyfin/jellyfin:latest"
-          image_pull_policy = "always"
+          image_pull_policy = "Always"
 
           security_context {
             run_as_user  = 1000
@@ -59,6 +59,18 @@ resource "kubernetes_deployment" "jellyfin" {
           port {
             container_port = 8096
           }
+
+          liveness_probe {
+            http_get {
+              path = "/"
+              port = 8096
+            }
+            initial_delay_seconds = 10
+            period_seconds        = 30
+            timeout_seconds       = 5
+            failure_threshold     = 3
+          }
+
           volume_mount {
             name       = "config"
             mount_path = "/config"

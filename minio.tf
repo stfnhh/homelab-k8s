@@ -62,7 +62,7 @@ resource "kubernetes_deployment" "minio" {
         container {
           name  = "minio"
           image = "quay.io/minio/minio:latest"
-          image_pull_policy = "always"
+          image_pull_policy = "Always"
 
           args  = ["server", "--address", ":9999", "--console-address", ":9001", "/data"]
           port {
@@ -73,6 +73,18 @@ resource "kubernetes_deployment" "minio" {
             container_port = 9001
             name           = "console"
           }
+
+          liveness_probe {
+            http_get {
+              path = "/"
+              port = 9001
+            }
+            initial_delay_seconds = 10
+            period_seconds        = 30
+            timeout_seconds       = 5
+            failure_threshold     = 3
+          }
+
           env {
             name  = "MINIO_BROWSER_REDIRECT_URL"
             value = "https://console.minio.${var.domain}"

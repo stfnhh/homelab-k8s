@@ -50,7 +50,7 @@ resource "kubernetes_deployment" "filegator" {
         container {
           name  = "filegator"
           image = "maxime1907/filegator"
-          image_pull_policy = "always"
+          image_pull_policy = "Always"
 
           env {
             name  = "PUID"
@@ -67,6 +67,17 @@ resource "kubernetes_deployment" "filegator" {
 
           port {
             container_port = 80
+          }
+
+          liveness_probe {
+            http_get {
+              path = "/"
+              port = 80
+            }
+            initial_delay_seconds = 10
+            period_seconds        = 30
+            timeout_seconds       = 5
+            failure_threshold     = 3
           }
 
           volume_mount {

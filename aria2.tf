@@ -50,7 +50,7 @@ resource "kubernetes_deployment" "ariang" {
         container {
           name  = "ariang"
           image = "hurlenko/aria2-ariang"
-          image_pull_policy = "always"
+          image_pull_policy = "Always"
 
           env {
             name  = "PUID"
@@ -67,6 +67,17 @@ resource "kubernetes_deployment" "ariang" {
 
           port {
             container_port = 8080
+          }
+
+          liveness_probe {
+            http_get {
+              path = "/"
+              port = 8080
+            }
+            initial_delay_seconds = 10
+            period_seconds        = 30
+            timeout_seconds       = 5
+            failure_threshold     = 3
           }
 
           volume_mount {

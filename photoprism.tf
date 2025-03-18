@@ -82,7 +82,7 @@ resource "kubernetes_deployment" "photoprism" {
         container {
           name  = "photoprism"
           image = "photoprism/photoprism:latest"
-          image_pull_policy = "always"
+          image_pull_policy = "Always"
 
           security_context {
             run_as_user  = 1000
@@ -90,6 +90,16 @@ resource "kubernetes_deployment" "photoprism" {
           }
           port {
             container_port = 2342
+          }
+          liveness_probe {
+            http_get {
+              path = "/"
+              port = 2342
+            }
+            initial_delay_seconds = 10
+            period_seconds        = 30
+            timeout_seconds       = 5
+            failure_threshold     = 3
           }
           env {
             name = "PHOTOPRISM_ADMIN_PASSWORD"
