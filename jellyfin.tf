@@ -48,8 +48,8 @@ resource "kubernetes_deployment" "jellyfin" {
           fs_group = 1000
         }
         container {
-          name  = "jellyfin"
-          image = "jellyfin/jellyfin:latest"
+          name              = "jellyfin"
+          image             = "jellyfin/jellyfin:latest"
           image_pull_policy = "Always"
 
           security_context {

@@ -48,8 +48,8 @@ resource "kubernetes_deployment" "filegator" {
 
       spec {
         container {
-          name  = "filegator"
-          image = "maxime1907/filegator"
+          name              = "filegator"
+          image             = "maxime1907/filegator"
           image_pull_policy = "Always"
 
           env {

@@ -48,8 +48,8 @@ resource "kubernetes_deployment" "ariang" {
 
       spec {
         container {
-          name  = "ariang"
-          image = "hurlenko/aria2-ariang"
+          name              = "ariang"
+          image             = "hurlenko/aria2-ariang"
           image_pull_policy = "Always"
 
           env {

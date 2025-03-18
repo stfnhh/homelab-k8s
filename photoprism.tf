@@ -80,8 +80,8 @@ resource "kubernetes_deployment" "photoprism" {
           fs_group = 1000
         }
         container {
-          name  = "photoprism"
-          image = "photoprism/photoprism:latest"
+          name              = "photoprism"
+          image             = "photoprism/photoprism:latest"
           image_pull_policy = "Always"
 
           security_context {
