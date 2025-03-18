@@ -50,6 +50,7 @@ resource "kubernetes_deployment" "filegator" {
         container {
           name  = "filegator"
           image = "maxime1907/filegator"
+          image_pull_policy = "always"
 
           env {
             name  = "PUID"

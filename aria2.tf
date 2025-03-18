@@ -50,6 +50,7 @@ resource "kubernetes_deployment" "ariang" {
         container {
           name  = "ariang"
           image = "hurlenko/aria2-ariang"
+          image_pull_policy = "always"
 
           env {
             name  = "PUID"

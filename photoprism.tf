@@ -82,6 +82,8 @@ resource "kubernetes_deployment" "photoprism" {
         container {
           name  = "photoprism"
           image = "photoprism/photoprism:latest"
+          image_pull_policy = "always"
+
           security_context {
             run_as_user  = 1000
             run_as_group = 1000

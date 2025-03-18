@@ -62,6 +62,8 @@ resource "kubernetes_deployment" "minio" {
         container {
           name  = "minio"
           image = "quay.io/minio/minio:latest"
+          image_pull_policy = "always"
+
           args  = ["server", "--address", ":9999", "--console-address", ":9001", "/data"]
           port {
             container_port = 9999

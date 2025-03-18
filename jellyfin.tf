@@ -50,6 +50,8 @@ resource "kubernetes_deployment" "jellyfin" {
         container {
           name  = "jellyfin"
           image = "jellyfin/jellyfin:latest"
+          image_pull_policy = "always"
+
           security_context {
             run_as_user  = 1000
             run_as_group = 1000

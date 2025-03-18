@@ -61,7 +61,7 @@ This cluster is configured to run the following services:
 - **Aria2** - A lightweight multi-protocol & multi-source download utility.
 - **Cert-Manager** - Automated TLS certificate management.
 - **FileGator** - A web-based file manager for self-hosted solutions.
-- **IAM** - Identity and access management for Kubernetes.
+- **IAM** - Identity and access management for AWS, used by Cert-Manager for Route53 access.
 - **Jellyfin** - A media server for streaming movies, TV shows, and music.
 - **Longhorn** - A distributed block storage solution.
 - **Minio** - High-performance object storage.
