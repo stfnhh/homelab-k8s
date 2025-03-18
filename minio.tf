@@ -85,6 +85,17 @@ resource "kubernetes_deployment" "minio" {
             failure_threshold     = 3
           }
 
+          readiness_probe {
+            http_get {
+              path = "/"
+              port = 9001
+            }
+            initial_delay_seconds = 10
+            period_seconds        = 10
+            timeout_seconds       = 3
+            failure_threshold     = 3
+          }
+
           env {
             name  = "MINIO_BROWSER_REDIRECT_URL"
             value = "https://console.minio.${var.domain}"

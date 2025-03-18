@@ -80,6 +80,17 @@ resource "kubernetes_deployment" "filegator" {
             failure_threshold     = 3
           }
 
+          readiness_probe {
+            http_get {
+              path = "/"
+              port = 80
+            }
+            initial_delay_seconds = 5
+            period_seconds        = 10
+            timeout_seconds       = 3
+            failure_threshold     = 3
+          }
+
           volume_mount {
             name       = "config"
             mount_path = "/config"

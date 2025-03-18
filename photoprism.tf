@@ -101,6 +101,16 @@ resource "kubernetes_deployment" "photoprism" {
             timeout_seconds       = 5
             failure_threshold     = 3
           }
+          readiness_probe {
+            http_get {
+              path = "/"
+              port = 2342
+            }
+            initial_delay_seconds = 15
+            period_seconds        = 10
+            timeout_seconds       = 3
+            failure_threshold     = 3
+          }
           env {
             name = "PHOTOPRISM_ADMIN_PASSWORD"
             value_from {
