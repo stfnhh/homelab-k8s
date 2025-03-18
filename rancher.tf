@@ -4,7 +4,7 @@ resource "kubernetes_manifest" "rancher_certificate" {
     kind       = "Certificate"
     metadata = {
       name      = "rancher-${replace(var.domain, ".", "-")}"
-      namespace = "cattle-system" // Use cattle-system for Rancher
+      namespace = "cattle-system" # Use cattle-system for Rancher
     }
     spec = {
       secretName = "rancher-${replace(var.domain, ".", "-")}-tls"
