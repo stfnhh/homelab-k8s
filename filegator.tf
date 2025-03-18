@@ -88,6 +88,16 @@ resource "kubernetes_deployment" "filegator" {
             name       = "data"
             mount_path = "/data"
           }
+          resources {
+            limits = {
+              cpu    = "500m"
+              memory = "512Mi"
+            }
+            requests = {
+              cpu    = "250m"
+              memory = "256Mi"
+            }
+          }
         }
 
         volume {
