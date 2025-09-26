@@ -122,7 +122,7 @@ resource "kubernetes_deployment" "filegator" {
           name = "data"
           nfs {
             server = var.nfs_server_ip
-            path   = "/media/media"
+            path   = "/var/nfs/shared/Media"
           }
         }
       }

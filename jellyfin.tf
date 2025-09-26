@@ -115,14 +115,14 @@ resource "kubernetes_deployment" "jellyfin" {
           name = "movies"
           nfs {
             server = var.nfs_server_ip
-            path   = "/media/media/movies"
+            path   = "/var/nfs/shared/Media/movies"
           }
         }
         volume {
           name = "tv"
           nfs {
             server = var.nfs_server_ip
-            path   = "/media/media/tv"
+            path   = "/var/nfs/shared/Media/tv"
           }
         }
       }

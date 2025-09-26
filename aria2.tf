@@ -122,7 +122,7 @@ resource "kubernetes_deployment" "ariang" {
           name = "downloads"
           nfs {
             server = var.nfs_server_ip
-            path   = "/media/media/downloads"
+            path   = "/var/nfs/shared/Media/downloads"
           }
         }
       }
