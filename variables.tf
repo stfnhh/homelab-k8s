@@ -23,8 +23,3 @@ variable "zone_id" {
   description = "Route53 Zone ID"
   type        = string
 }
-
-variable "home_assistant_ip" {
-  description = "Home Assistant IP"
-  type        = string
-}
