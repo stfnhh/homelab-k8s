@@ -9,57 +9,57 @@ resource "kubernetes_secret" "immich_db_url" {
   }
 }
 
-resource "kubernetes_job" "immich_db_bootstrap" {
-  metadata {
-    name      = "immich-db-bootstrap"
-    namespace = kubernetes_namespace.immich.metadata[0].name
-    labels = {
-      app = "immich-db-bootstrap"
-    }
-  }
+# resource "kubernetes_job" "immich_db_bootstrap" {
+#   metadata {
+#     name      = "immich-db-bootstrap"
+#     namespace = kubernetes_namespace.immich.metadata[0].name
+#     labels = {
+#       app = "immich-db-bootstrap"
+#     }
+#   }
 
-  spec {
-    backoff_limit                 = 1
-    ttl_seconds_after_finished    = 300  # auto-clean after 5 minutes
+#   spec {
+#     backoff_limit              = 1
+#     ttl_seconds_after_finished = 300 # auto-clean after 5 minutes
 
-    template {
-      metadata {
-        labels = {
-          app = "immich-db-bootstrap"
-        }
-      }
-      spec {
-        restart_policy = "OnFailure"
+#     template {
+#       metadata {
+#         labels = {
+#           app = "immich-db-bootstrap"
+#         }
+#       }
+#       spec {
+#         restart_policy = "OnFailure"
 
-        container {
-          name  = "create-immich-db"
-          image = "pgvector/pgvector:pg18-trixie"
+#         container {
+#           name  = "create-immich-db"
+#           image = "pgvector/pgvector:pg18-trixie"
 
-          env {
-            name = "DB_URL"
-            value_from {
-              secret_key_ref {
-                name = "immich-db-url"
-                key  = "DB_URL"
-              }
-            }
-          }
+#           env {
+#             name = "DB_URL"
+#             value_from {
+#               secret_key_ref {
+#                 name = "immich-db-url"
+#                 key  = "DB_URL"
+#               }
+#             }
+#           }
 
-          command = [
-            "sh", "-c",
-            <<-EOT
-              # replace /immich with /postgres for bootstrap connection
-              BOOTSTRAP_URL=$(echo "$DB_URL" | sed 's|/immich$|/postgres|')
+#           command = [
+#             "sh", "-c",
+#             <<-EOT
+#               # replace /immich with /postgres for bootstrap connection
+#               BOOTSTRAP_URL=$(echo "$DB_URL" | sed 's|/immich$|/postgres|')
 
-              psql "$BOOTSTRAP_URL" -tc "SELECT 1 FROM pg_database WHERE datname='immich'" | grep -q 1 \
-                || psql "$BOOTSTRAP_URL" -c "CREATE DATABASE immich;"
-            EOT
-          ]
-        }
-      }
-    }
-  }
-}
+#               psql "$BOOTSTRAP_URL" -tc "SELECT 1 FROM pg_database WHERE datname='immich'" | grep -q 1 \
+#                 || psql "$BOOTSTRAP_URL" -c "CREATE DATABASE immich;"
+#             EOT
+#           ]
+#         }
+#       }
+#     }
+#   }
+# }
 
 resource "kubernetes_namespace" "immich" {
   metadata {
@@ -79,7 +79,7 @@ resource "kubernetes_deployment" "immich" {
     name      = "immich"
     namespace = kubernetes_namespace.immich.metadata[0].name
   }
-  depends_on = [kubernetes_job.immich_db_bootstrap]
+  # depends_on = [kubernetes_job.immich_db_bootstrap]
   spec {
     replicas = 1
     selector {
@@ -95,8 +95,9 @@ resource "kubernetes_deployment" "immich" {
       }
       spec {
         container {
-          name  = "immich"
-          image = "ghcr.io/immich-app/immich-server:release"
+          name              = "immich"
+          image             = "ghcr.io/immich-app/immich-server:release"
+          image_pull_policy = "Always"
           env {
             name  = "REDIS_HOSTNAME"
             value = "redis.redis.svc.cluster.local"
@@ -172,9 +173,9 @@ resource "kubernetes_deployment" "immich_machine_learning" {
       }
       spec {
         container {
-          name  = "immich-machine-learning"
-          image = "ghcr.io/immich-app/immich-machine-learning:v1.143.1"
-
+          name              = "immich-machine-learning"
+          image             = "ghcr.io/immich-app/immich-machine-learning:v1.143.1"
+          image_pull_policy = "Always"
           env {
             name  = "IMMICH_PORT"
             value = "3003"

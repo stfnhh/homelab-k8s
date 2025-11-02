@@ -91,6 +91,10 @@ resource "kubernetes_deployment" "jellyfin" {
             mount_path = "/data/movies"
           }
           volume_mount {
+            name       = "music"
+            mount_path = "/data/music"
+          }
+          volume_mount {
             name       = "tv"
             mount_path = "/data/tv"
           }
@@ -116,6 +120,13 @@ resource "kubernetes_deployment" "jellyfin" {
           nfs {
             server = var.nfs_server_ip
             path   = "/var/nfs/shared/Media/movies"
+          }
+        }
+        volume {
+          name = "music"
+          nfs {
+            server = var.nfs_server_ip
+            path   = "/var/nfs/shared/Media/music"
           }
         }
         volume {
