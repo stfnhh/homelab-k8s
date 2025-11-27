@@ -1,6 +1,6 @@
 resource "kubernetes_manifest" "unifi_ingressroute" {
   manifest = {
-    apiVersion = "traefik.containo.us/v1alpha1"
+    apiVersion = "traefik.io/v1alpha1"
     kind       = "IngressRoute"
     metadata = {
       name      = "unifi"
@@ -14,8 +14,8 @@ resource "kubernetes_manifest" "unifi_ingressroute" {
           kind  = "Rule"
           services = [
             {
-              name = "unifi-svc"
-              port = 443
+              name             = "unifi-svc"
+              port             = 443
               serversTransport = "unifi-transport"
             }
           ]
@@ -64,15 +64,15 @@ resource "kubernetes_service" "unifi_service" {
 
 resource "kubernetes_manifest" "unifi_transport" {
   manifest = {
-    apiVersion = "traefik.containo.us/v1alpha1"
+    apiVersion = "traefik.io/v1alpha1"
     kind       = "ServersTransport"
     metadata = {
       name      = "unifi-transport"
       namespace = "default"
     }
     spec = {
-      serverName          = "unifi.${var.domain}"
-      insecureSkipVerify  = true
+      serverName         = "unifi.${var.domain}"
+      insecureSkipVerify = true
     }
   }
 }

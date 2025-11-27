@@ -1,6 +1,6 @@
 resource "kubernetes_manifest" "traefik_dashboard" {
   manifest = {
-    apiVersion = "traefik.containo.us/v1alpha1"
+    apiVersion = "traefik.io/v1alpha1"
     kind       = "IngressRoute"
     metadata = {
       name      = "traefik-dashboard"

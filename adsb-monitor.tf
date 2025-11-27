@@ -25,6 +25,8 @@ resource "kubernetes_secret" "adsb_secret" {
     ALERT_CATEGORIES = ""
     POLL_INTERVAL    = ""
     BLACKLIST_TTL    = ""
+    QUIET_START      = ""
+    QUIET_END        = ""
   }
 
   lifecycle {
@@ -59,7 +61,7 @@ resource "kubernetes_deployment" "adsb" {
       spec {
         container {
           name              = "adsb-monitor"
-          image             = "ghcr.io/stfnhh/adsb-alarm:v0.0.1@sha256:1649e279034e31b2f78e4d70a66f9dccc78d9abb4cc7b1e7ec3b79175a2c3b67"
+          image             = "ghcr.io/stfnhh/adsb-alarm:v0.2.0@sha256:3b95cc488048dacb868bf513dfcae685b5f6e3a1008c4a4fbb688c0e385097eb"
           image_pull_policy = "IfNotPresent"
 
           env_from {

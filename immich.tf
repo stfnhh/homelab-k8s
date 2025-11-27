@@ -221,7 +221,7 @@ resource "kubernetes_service" "immich_machine_learning" {
 
 resource "kubernetes_manifest" "immich_ingressroute" {
   manifest = {
-    apiVersion = "traefik.containo.us/v1alpha1"
+    apiVersion = "traefik.io/v1alpha1"
     kind       = "IngressRoute"
     metadata = {
       name      = "immich"

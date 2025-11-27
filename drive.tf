@@ -1,6 +1,6 @@
 resource "kubernetes_manifest" "drive_ingressroute" {
   manifest = {
-    apiVersion = "traefik.containo.us/v1alpha1"
+    apiVersion = "traefik.io/v1alpha1"
     kind       = "IngressRoute"
     metadata = {
       name      = "drive"
@@ -14,8 +14,8 @@ resource "kubernetes_manifest" "drive_ingressroute" {
           kind  = "Rule"
           services = [
             {
-              name = "drive-svc"
-              port = 443
+              name             = "drive-svc"
+              port             = 443
               serversTransport = "drive-transport"
             }
           ]
@@ -64,15 +64,15 @@ resource "kubernetes_service" "drive_service" {
 
 resource "kubernetes_manifest" "drive_transport" {
   manifest = {
-    apiVersion = "traefik.containo.us/v1alpha1"
+    apiVersion = "traefik.io/v1alpha1"
     kind       = "ServersTransport"
     metadata = {
       name      = "drive-transport"
       namespace = "default"
     }
     spec = {
-      serverName          = "drive.${var.domain}"
-      insecureSkipVerify  = true
+      serverName         = "drive.${var.domain}"
+      insecureSkipVerify = true
     }
   }
 }
