@@ -21,42 +21,42 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Discover changed Terraform folders (apps + platform)
-      id: set-matrix
-      run: |
-        BEFORE="${{ github.event.before }}"
-        AFTER="${{ github.sha }}"
+        id: set-matrix
+        run: |
+          BEFORE="${{ github.event.before }}"
+          AFTER="${{ github.sha }}"
 
-        echo "Diffing commits:"
-        echo "BEFORE=$BEFORE"
-        echo "AFTER=$AFTER"
+          echo "Diffing commits:"
+          echo "BEFORE=$BEFORE"
+          echo "AFTER=$AFTER"
 
-        # GitHub sometimes sets BEFORE to all zeros on new branches — handle it
-        if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
-          echo "No previous commit — scanning all folders"
-          CHANGED=$(find apps -maxdepth 1 -mindepth 1 -type d)
-          CHANGED="$CHANGED"$'\n'"platform"
-        else
-          CHANGED=$(git diff --name-only "$BEFORE" "$AFTER" || true)
-        fi
+          # GitHub sometimes sets BEFORE to all zeros on new branches — handle it
+          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            echo "No previous commit — scanning all folders"
+            CHANGED=$(find apps -maxdepth 1 -mindepth 1 -type d)
+            CHANGED="$CHANGED"$'\n'"platform"
+          else
+            CHANGED=$(git diff --name-only "$BEFORE" "$AFTER" || true)
+          fi
 
-        echo "Changed files:"
-        echo "$CHANGED"
+          echo "Changed files:"
+          echo "$CHANGED"
 
-        # Extract the folders (apps/* and platform)
-        FOLDERS=$(echo "$CHANGED" \
-          | grep -E '^(apps/[^/]+/|platform/)' || true \
-          | sed -E 's:^(apps/[^/]+)/.*:\1:; s:^(platform)/.*:\1:' \
-          | sort -u \
-          | jq -R . \
-          | jq -s -c .)
+          # Extract the folders (apps/* and platform)
+          FOLDERS=$(echo "$CHANGED" \
+            | grep -E '^(apps/[^/]+/|platform/)' || true \
+            | sed -E 's:^(apps/[^/]+)/.*:\1:; s:^(platform)/.*:\1:' \
+            | sort -u \
+            | jq -R . \
+            | jq -s -c .)
 
-        # If empty, produce "[]" — valid JSON
-        if [ -z "$FOLDERS" ] || [ "$FOLDERS" = "[]" ]; then
-          FOLDERS="[]"
-        fi
+          # If empty, produce "[]" — valid JSON
+          if [ -z "$FOLDERS" ] || [ "$FOLDERS" = "[]" ]; then
+            FOLDERS="[]"
+          fi
 
-        echo "folders=$FOLDERS" >> "$GITHUB_OUTPUT"
-        echo "Changed folders: $FOLDERS"
+          echo "folders=$FOLDERS" >> "$GITHUB_OUTPUT"
+          echo "Changed folders: $FOLDERS"
 
   checkov:
     needs: discover
