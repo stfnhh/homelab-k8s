@@ -89,8 +89,11 @@ jobs:
         folder: ${{ fromJson(needs.changes.outputs.folders) }}
 
     steps:
-      - name: Checkout code
+      - name: Checkout repo (write enabled)
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Generate Terraform Docs
         uses: terraform-docs/gh-actions@v1
