@@ -1,6 +1,11 @@
 name: Checkov
 
 on:
+  pull_request:
+    paths:
+      - 'apps/**'
+      - 'platform/**'
+      - '.github/workflows/checkov.yml'
   push:
     branches: [ main ]
 
@@ -9,43 +14,31 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      folders: ${{ steps.folders.outputs.folders }}
+      folders: ${{ steps.set-matrix.outputs.folders }}
 
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Determine changed folders
-        id: folders
+      - name: Discover changed Terraform app folders
+        id: set-matrix
         run: |
-          dirs=""
+          CHANGED=$(git diff --name-only HEAD^ HEAD || echo "")
 
-          while IFS= read -r file; do
-            if [[ "$file" == apps/*/* ]]; then
-              folder="${file#apps/}"     # remove apps/
-              folder="${folder%%/*}"     # take folder name
-              dirs="$dirs apps/$folder"
-            fi
+          echo "Changed files:"
+          echo "$CHANGED"
 
-            if [[ "$file" == platform/* ]]; then
-              dirs="$dirs platform"
-            fi
-          done <<< "$CHANGED"
+          # Extract directories under apps/
+          FOLDERS=$(echo "$CHANGED" \
+            | grep -E "^apps/|^platform/" \
+            | cut -d'/' -f1-2 \
+            | sort -u \
+            | jq -R . \
+            | jq -s -c .)
 
-          dirs=$(echo "$dirs" | tr ' ' '\n' | sed '/^\s*$/d' | sort -u)
+          echo "folders=$FOLDERS" >> "$GITHUB_OUTPUT"
+          echo "Changed folders: $FOLDERS"
 
-          echo "Resolved folders:"
-          echo "$dirs"
-
-          if [[ -z "$dirs" ]]; then
-            json='[]'
-          else
-            json=$(echo "$dirs" | jq -R . | jq -s -c .)
-          fi
-
-          echo "folders=$json" >> "$GITHUB_OUTPUT"
-          echo "Final JSON: $json"
 
   checkov:
     needs: discover
@@ -58,10 +51,13 @@ jobs:
         folder: ${{ fromJson(needs.discover.outputs.folders) }}
 
     steps:
-      - uses: actions/checkout@v4
-      - run: pip install checkov
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Run Checkov on folder
+      - name: Install Checkov
+        run: pip install checkov
+
+      - name: Run Checkov on ${{ matrix.folder }}
         run: |
-          echo "Scanning: ${{ matrix.folder }}"
+          echo "Running Checkov on: ${{ matrix.folder }}"
           checkov -d "${{ matrix.folder }}"
