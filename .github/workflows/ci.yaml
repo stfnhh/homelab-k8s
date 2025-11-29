@@ -12,20 +12,39 @@ on:
 jobs:
   discover:
     runs-on: ubuntu-latest
+
     outputs:
       folders: ${{ steps.set-matrix.outputs.folders }}
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+      uses: actions/checkout@v4
 
-      - name: Discover Terraform folders
+      - name: Discover changed Terraform folders (apps + platform)
         id: set-matrix
         run: |
-          folders=$(find apps -maxdepth 1 -mindepth 1 -type d | sort | jq -R . | jq -s -c .)
-          echo "folders=$folders" >> "$GITHUB_OUTPUT"
-          echo "Found folders: $folders"
-          
+          # Get changed files vs previous commit
+          CHANGED=$(git diff --name-only HEAD^ HEAD || echo "")
+
+          echo "Changed files:"
+          echo "$CHANGED"
+
+          # Collect app folders (apps/<name>) and 'platform' if any file under it changed
+          FOLDERS=$(echo "$CHANGED" \
+            | grep -E '^(apps/[^/]+/|platform/)' || true \
+            | sed -E 's:^(apps/[^/]+)/.*:\1:; s:^(platform)/.*:\1:' \
+            | sort -u \
+            | jq -R . \
+            | jq -s -c .)
+
+          # Fallback to empty array if nothing matched
+          if [ -z "$FOLDERS" ]; then
+            FOLDERS="[]"
+          fi
+
+          echo "folders=$FOLDERS" >> "$GITHUB_OUTPUT"
+          echo "Changed folders (apps + platform): $FOLDERS"
+
   checkov:
     needs: discover
     runs-on: ubuntu-latest
