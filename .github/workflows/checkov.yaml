@@ -42,7 +42,7 @@ jobs:
               dirs="$dirs platform"
             fi
           done
-
+          echo $dirs
           # Deduplicate and turn into JSON array
           if [[ -z "$dirs" ]]; then
             json="[]"
