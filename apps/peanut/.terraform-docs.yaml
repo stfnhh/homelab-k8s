@@ -1,0 +1,16 @@
+content: |-
+
+  {{ .Requirements }}
+  {{ .Providers }}
+  {{ .Modules }}
+  {{ .Resources }}
+  {{ .Inputs }}
+  {{ .Outputs }}
+
+sort:
+  enabled: true
+  by: name
+
+settings:
+  anchor: true
+  color: true
