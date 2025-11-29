@@ -19,22 +19,27 @@ jobs:
       - name: Find changed folders
         id: set
         run: |
-          # Get changed files safely for pull_request or push
-          CHANGED=$(git diff --name-only ${{ github.event.pull_request.base.sha || 'HEAD~1' }} ${{ github.sha }} || true)
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE="${{ github.event.pull_request.base.sha }}"
+          else
+            BASE="${{ github.sha }}~1"
+          fi
+
+          CHANGED=$(git diff --name-only "$BASE" "${{ github.sha }}" || true)
 
           echo "Changed files:"
           echo "$CHANGED"
 
-          # Extract only apps/* and platform
+          # Extract only the first directory level under apps/, or 'platform'
           FOLDERS=$(echo "$CHANGED" \
             | grep -E '^(apps/[^/]+/|platform/)' || true \
-            | sed -E 's:^(apps/[^/]+)/.*:\1:; s:^(platform)/.*:\1:' \
+            | cut -d'/' -f1-2 \
             | sort -u)
 
-          echo "Matched:"
+          echo "Matched folders:"
           echo "$FOLDERS"
 
-          # Guarantee valid JSON output
+          # Produce valid JSON
           if [ -z "$(echo "$FOLDERS" | tr -d '[:space:]')" ]; then
             JSON="[]"
           else
@@ -42,7 +47,9 @@ jobs:
           fi
 
           echo "folders=$JSON" >> "$GITHUB_OUTPUT"
-          echo "Final: $JSON"
+          echo "Final JSON: $JSON"
+
+
 
   checkov:
     needs: discover
