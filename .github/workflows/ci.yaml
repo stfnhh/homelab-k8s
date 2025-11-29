@@ -14,76 +14,55 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      folders: ${{ steps.out.outputs.folders }}
+      folders: ${{ steps.set.outputs.folders }}
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # <-- required for changed file detection
 
-      - name: Determine diff range
-        id: range
+      - name: Find changed folders
+        id: set
         run: |
-          BEFORE="${{ github.event.before }}"
-          AFTER="${{ github.sha }}"
-
-          # GH sets BEFORE to all zeros on new branches — no diff available
-          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ] || [ -z "$BEFORE" ]; then
-            echo "no_diff=true" >> $GITHUB_OUTPUT
-          else
-            echo "no_diff=false" >> $GITHUB_OUTPUT
-          fi
-
-          echo "before=$BEFORE"
-          echo "after=$AFTER"
-
-      - name: Discover changed Terraform folders (apps + platform)
-        id: out
-        run: |
-          if [ "${{ steps.range.outputs.no_diff }}" = "true" ]; then
-            echo "No previous commit — using full directory scan"
-            CHANGED=$(find apps -maxdepth 1 -mindepth 1 -type d; echo platform)
-          else
-            CHANGED=$(git diff --name-only "${{ github.event.before }}" "${{ github.sha }}" || true)
-          fi
+          # Get changed files safely for pull_request or push
+          CHANGED=$(git diff --name-only ${{ github.event.pull_request.base.sha || 'HEAD~1' }} ${{ github.sha }} || true)
 
           echo "Changed files:"
           echo "$CHANGED"
 
-          # Extract folders under apps/ or platform/
+          # Extract only apps/* and platform
           FOLDERS=$(echo "$CHANGED" \
             | grep -E '^(apps/[^/]+/|platform/)' || true \
             | sed -E 's:^(apps/[^/]+)/.*:\1:; s:^(platform)/.*:\1:' \
             | sort -u)
 
-          echo "Matched folders:"
+          echo "Matched:"
           echo "$FOLDERS"
 
-          # Convert to JSON array — guaranteed valid
-          if [ -z "$FOLDERS" ]; then
+          # Guarantee valid JSON output
+          if [ -z "$(echo "$FOLDERS" | tr -d '[:space:]')" ]; then
             JSON="[]"
           else
             JSON=$(echo "$FOLDERS" | jq -R . | jq -s -c .)
           fi
 
           echo "folders=$JSON" >> "$GITHUB_OUTPUT"
-          echo "Final JSON: $JSON"
-
+          echo "Final: $JSON"
 
   checkov:
     needs: discover
     runs-on: ubuntu-latest
+
     strategy:
       fail-fast: false
       matrix:
         folder: ${{ fromJson(needs.discover.outputs.folders) }}
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - run: pip install checkov
 
-      - name: Install Checkov
-        run: pip install checkov
-
-      - name: Run Checkov on ${{ matrix.folder }}
+      - name: Run Checkov
         run: |
-          echo "Running Checkov on: ${{ matrix.folder }}"
+          echo "Scanning: ${{ matrix.folder }}"
           checkov -d "${{ matrix.folder }}"
