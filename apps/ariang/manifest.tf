@@ -3,14 +3,14 @@ resource "kubernetes_manifest" "manifest" {
     apiVersion = "traefik.io/v1alpha1"
     kind       = "IngressRoute"
     metadata = {
-      name      = "ariang"
+      name      = local.name
       namespace = kubernetes_namespace.namespace.metadata[0].name
     }
     spec = {
       entryPoints = ["websecure"]
       routes = [
         {
-          match = "Host(`ariang.${var.domain}`)"
+          match = "Host(`${local.name}.${var.domain}`)"
           kind  = "Rule"
           services = [
             {

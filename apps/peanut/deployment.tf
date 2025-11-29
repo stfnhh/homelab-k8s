@@ -1,6 +1,6 @@
 resource "kubernetes_deployment" "deployment" {
   metadata {
-    name      = "peanut"
+    name      = local.name
     namespace = kubernetes_namespace.namespace.metadata[0].name
   }
 
@@ -9,20 +9,20 @@ resource "kubernetes_deployment" "deployment" {
 
     selector {
       match_labels = {
-        app = "peanut"
+        app = local.name
       }
     }
 
     template {
       metadata {
         labels = {
-          app = "peanut"
+          app = local.name
         }
       }
 
       spec {
         container {
-          name              = "peanut"
+          name              = local.name
           image             = "brandawg93/peanut:5.18.0@sha256:70062870e649b3bcf8c5165353195d3b30e5e4ad0592c2925cee59ec2df327c3"
           image_pull_policy = "Always"
 

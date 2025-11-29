@@ -1,6 +1,6 @@
 resource "kubernetes_endpoints" "endpoints" {
   metadata {
-    name      = "unifi"
+    name      = local.name
     namespace = "default"
   }
 

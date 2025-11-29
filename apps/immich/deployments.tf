@@ -2,26 +2,26 @@ resource "kubernetes_deployment" "deployment" {
   # checkov:skip=CKV_K8S_22: container requires write access and cannot run read-only
 
   metadata {
-    name      = "immich"
+    name      = local.name
     namespace = kubernetes_namespace.namespace.metadata[0].name
   }
-  # depends_on = [kubernetes_job.immich_db_bootstrap]
+
   spec {
     replicas = 1
     selector {
       match_labels = {
-        app = "immich"
+        app = local.name
       }
     }
     template {
       metadata {
         labels = {
-          app = "immich"
+          app = local.name
         }
       }
       spec {
         container {
-          name              = "immich"
+          name              = local.name
           image             = "ghcr.io/immich-app/immich-server:v2.3.1@sha256:61e9fba6d36d23915dfcb1387ef74db87d1fbf4a924981ced0ce5feb0f71100a"
           image_pull_policy = "Always"
 
@@ -111,7 +111,7 @@ resource "kubernetes_deployment" "immich_machine_learning" {
 
 
   metadata {
-    name      = "immich-machine-learning"
+    name      = "${local.name}-machine-learning"
     namespace = kubernetes_namespace.namespace.metadata[0].name
   }
 
@@ -119,18 +119,18 @@ resource "kubernetes_deployment" "immich_machine_learning" {
     replicas = 1
     selector {
       match_labels = {
-        app = "immich-machine-learning"
+        app = "${local.name}-machine-learning"
       }
     }
     template {
       metadata {
         labels = {
-          app = "immich-machine-learning"
+          app = "${local.name}-machine-learning"
         }
       }
       spec {
         container {
-          name              = "immich-machine-learning"
+          name              = "${local.name}-machine-learning"
           image             = "ghcr.io/immich-app/immich-machine-learning:v2.3.0@sha256:dee0ffce7efba1fabe3efdc23e2e83f89b84d76ad0565072c1cf4055dcf76dd0"
           image_pull_policy = "Always"
 

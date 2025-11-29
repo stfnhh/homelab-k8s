@@ -1,6 +1,6 @@
 resource "kubernetes_namespace" "namespace" {
   metadata {
-    name = "immich"
+    name = local.name
   }
 
   lifecycle {

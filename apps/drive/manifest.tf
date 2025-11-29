@@ -3,11 +3,11 @@ resource "kubernetes_manifest" "manifest_transport" {
     apiVersion = "traefik.io/v1alpha1"
     kind       = "ServersTransport"
     metadata = {
-      name      = "drive-transport"
+      name      = "${local.name}-transport"
       namespace = "default"
     }
     spec = {
-      serverName         = "drive.${var.domain}"
+      serverName         = "${local.name}.${var.domain}"
       insecureSkipVerify = true
     }
   }
@@ -18,18 +18,18 @@ resource "kubernetes_manifest" "manifest_ingressroute" {
     apiVersion = "traefik.io/v1alpha1"
     kind       = "IngressRoute"
     metadata = {
-      name      = "drive"
+      name      = local.name
       namespace = "default"
     }
     spec = {
       entryPoints = ["websecure"]
       routes = [
         {
-          match = "Host(`drive.${var.domain}`)"
+          match = "Host(`${local.name}.${var.domain}`)"
           kind  = "Rule"
           services = [
             {
-              name             = "drive"
+              name             = local.name
               port             = 443
               serversTransport = kubernetes_manifest.manifest_transport.manifest.metadata.name
             }

@@ -1,6 +1,6 @@
 resource "kubernetes_secret" "secret" {
   metadata {
-    name      = "adsb-monitor"
+    name      = local.name
     namespace = kubernetes_namespace.namespace.metadata[0].name
   }
 

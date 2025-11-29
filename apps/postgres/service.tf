@@ -1,12 +1,12 @@
 resource "kubernetes_service" "service" {
   metadata {
-    name      = "postgres"
+    name      = local.name
     namespace = kubernetes_namespace.namespace.metadata[0].name
   }
 
   spec {
     selector = {
-      app = "postgres"
+      app = local.name
     }
     port {
       port        = 5432

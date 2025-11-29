@@ -7,7 +7,7 @@ resource "kubernetes_manifest" "manifest_transport" {
       namespace = "default"
     }
     spec = {
-      serverName         = "unifi.${var.domain}"
+      serverName         = "${local.name}.${var.domain}"
       insecureSkipVerify = true
     }
   }
@@ -18,18 +18,18 @@ resource "kubernetes_manifest" "manifest_ingressroute" {
     apiVersion = "traefik.io/v1alpha1"
     kind       = "IngressRoute"
     metadata = {
-      name      = "unifi"
+      name      = local.name
       namespace = "default"
     }
     spec = {
       entryPoints = ["websecure"]
       routes = [
         {
-          match = "Host(`unifi.${var.domain}`)"
+          match = "Host(`${local.name}.${var.domain}`)"
           kind  = "Rule"
           services = [
             {
-              name             = "unifi"
+              name             = local.name
               port             = 443
               serversTransport = kubernetes_manifest.manifest_transport.manifest.metadata.name
             }

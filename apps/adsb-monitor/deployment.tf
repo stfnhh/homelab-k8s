@@ -3,7 +3,7 @@ resource "kubernetes_deployment" "deployment" {
 
   wait_for_rollout = true
   metadata {
-    name      = "adsb-monitor"
+    name      = local.name
     namespace = kubernetes_namespace.namespace.metadata[0].name
   }
 
@@ -12,20 +12,20 @@ resource "kubernetes_deployment" "deployment" {
 
     selector {
       match_labels = {
-        app = "adsb-monitor"
+        app = local.name
       }
     }
 
     template {
       metadata {
         labels = {
-          app = "adsb-monitor"
+          app = local.name
         }
       }
 
       spec {
         container {
-          name              = "adsb-monitor"
+          name              = local.name
           image             = "ghcr.io/stfnhh/adsb-alarm:v0.2.1@sha256:978c4b73ebfc508570194ef9394ff7bfdef1068229f70148a50e936fe775854c"
           image_pull_policy = "Always"
 

@@ -1,18 +1,22 @@
 resource "kubernetes_deployment" "deployment" {
   metadata {
-    name      = "kopia"
+    name      = local.name
     namespace = kubernetes_namespace.namespace.metadata[0].name
   }
 
   spec {
     replicas = 1
     selector {
-      match_labels = { app = "kopia" }
+      match_labels = { 
+        app = local.name
+      }
     }
 
     template {
       metadata {
-        labels = { app = "kopia" }
+        labels = { 
+          app = local.name 
+        }
       }
 
       spec {
@@ -21,7 +25,7 @@ resource "kubernetes_deployment" "deployment" {
         }
 
         container {
-          name              = "kopia"
+          name              = local.name
           image             = "kopia/kopia:0.22.2@sha256:883b0f357cafbf2d9ea828a1336951fa8998cf6b63ea55fdf57b1f22447e7f47"
           image_pull_policy = "Always"
 

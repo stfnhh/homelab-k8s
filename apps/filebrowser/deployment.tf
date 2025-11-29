@@ -2,7 +2,7 @@ resource "kubernetes_deployment" "deployment" {
   # checkov:skip=CKV_K8S_22: image requires RW filesystem
 
   metadata {
-    name      = "filebrowser"
+    name      = local.name
     namespace = kubernetes_namespace.namespace.metadata[0].name
   }
 
@@ -11,14 +11,14 @@ resource "kubernetes_deployment" "deployment" {
 
     selector {
       match_labels = {
-        app = "filebrowser"
+        app = local.name
       }
     }
 
     template {
       metadata {
         labels = {
-          app = "filebrowser"
+          app = local.name
         }
       }
 
@@ -33,7 +33,7 @@ resource "kubernetes_deployment" "deployment" {
         }
 
         container {
-          name              = "filebrowser"
+          name              = local.name
           image             = "filebrowser/filebrowser:v2.49.0@sha256:e9ef7570b2e4110e9842f2e004f2aaac246e54e7fef2b3b9f4352a3a1bb04508"
           image_pull_policy = "Always"
 

@@ -1,12 +1,12 @@
 resource "kubernetes_service" "service" {
   metadata {
-    name      = "ariang"
+    name      = local.name
     namespace = kubernetes_namespace.namespace.metadata[0].name
   }
 
   spec {
     selector = {
-      app = "ariang"
+      app = local.name
     }
 
     port {

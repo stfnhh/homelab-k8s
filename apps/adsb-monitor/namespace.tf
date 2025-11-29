@@ -1,6 +1,6 @@
 resource "kubernetes_namespace" "namespace" {
   metadata {
-    name = "adsb-monitor"
+    name = local.name
   }
 
   lifecycle {

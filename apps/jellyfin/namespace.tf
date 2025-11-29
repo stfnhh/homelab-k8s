@@ -1,6 +1,6 @@
 resource "kubernetes_namespace" "namespace" {
   metadata {
-    name = "jellyfin"
+    name = local.name
   }
 
   lifecycle {

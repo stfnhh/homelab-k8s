@@ -2,7 +2,7 @@ resource "kubernetes_service" "service" {
   # checkov:skip=CKV_K8S_21: ignoring default namespace rule
 
   metadata {
-    name      = "drive"
+    name      = local.name
     namespace = "default"
   }
 

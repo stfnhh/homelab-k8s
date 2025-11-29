@@ -1,8 +1,8 @@
 resource "kubernetes_deployment" "deployment" {
   # checkov:skip=CKV_K8S_22:read-only root filesystem not compatible
-  
+
   metadata {
-    name      = "redis"
+    name      = local.name
     namespace = kubernetes_namespace.namespace.metadata[0].name
   }
 
@@ -11,20 +11,20 @@ resource "kubernetes_deployment" "deployment" {
 
     selector {
       match_labels = {
-        app = "redis"
+        app = local.name
       }
     }
 
     template {
       metadata {
         labels = {
-          app = "redis"
+          app = local.name
         }
       }
 
       spec {
         container {
-          name  = "redis"
+          name  = local.name
           image = "redis:alpine@sha256:6cbef353e480a8a6e7f10ec545f13d7d3fa85a212cdcc5ffaf5a1c818b9d3798"
 
           command = ["redis-server"]
@@ -34,7 +34,7 @@ resource "kubernetes_deployment" "deployment" {
           ]
 
           volume_mount {
-            name       = "redisdata"
+            name       = local.name
             mount_path = "/data"
           }
 
@@ -85,7 +85,7 @@ resource "kubernetes_deployment" "deployment" {
         }
 
         volume {
-          name = "redisdata"
+          name = local.name
 
           persistent_volume_claim {
             claim_name = kubernetes_persistent_volume_claim.persistent_volume_claim.metadata[0].name

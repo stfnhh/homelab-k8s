@@ -1,6 +1,6 @@
 resource "kubernetes_namespace" "namespace" {
   metadata {
-    name = "redis"
+    name = local.name
   }
 
   lifecycle {

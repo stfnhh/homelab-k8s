@@ -1,6 +1,6 @@
 resource "kubernetes_namespace" "namespace" {
   metadata {
-    name = "kopia"
+    name = local.name
   }
   lifecycle {
     ignore_changes = [metadata]

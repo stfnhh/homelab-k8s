@@ -5,7 +5,7 @@ resource "kubernetes_deployment" "deployment" {
   # checkov:skip=CKV_K8S_28: NET_RAW is required for this image
 
   metadata {
-    name      = "ariang"
+    name      = local.name
     namespace = kubernetes_namespace.namespace.metadata[0].name
   }
 
@@ -14,20 +14,20 @@ resource "kubernetes_deployment" "deployment" {
 
     selector {
       match_labels = {
-        app = "ariang"
+        app = local.name
       }
     }
 
     template {
       metadata {
         labels = {
-          app = "ariang"
+          app = local.name
         }
       }
 
       spec {
         container {
-          name              = "ariang"
+          name              = local.name
           image             = "hurlenko/aria2-ariang:1.3.11@sha256:cee118a74e27539f4e57647f046a4cbe4b999ff17d7d15672a7f7bd60f2ab6ee"
           image_pull_policy = "Always"
 

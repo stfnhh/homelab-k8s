@@ -4,7 +4,7 @@ resource "kubernetes_deployment" "deployment" {
   # checkov:skip=CKV_K8S_22:read-only root filesystem not compatible
 
   metadata {
-    name      = "postgres"
+    name      = local.name
     namespace = kubernetes_namespace.namespace.metadata[0].name
   }
 
@@ -12,7 +12,7 @@ resource "kubernetes_deployment" "deployment" {
     replicas = 1
     selector {
       match_labels = {
-        app = "postgres"
+        app = local.name
       }
     }
 
@@ -20,13 +20,13 @@ resource "kubernetes_deployment" "deployment" {
     template {
       metadata {
         labels = {
-          app = "postgres"
+          app = local.name
         }
       }
 
       spec {
         container {
-          name  = "postgres"
+          name  = local.name
           image = "pgvector/pgvector:pg18-trixie@sha256:6e0b281a99959919bec7c94718162e75cbbf48e6fd3a5c7529067fa701264082"
 
           security_context {}

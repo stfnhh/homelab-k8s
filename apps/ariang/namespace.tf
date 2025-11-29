@@ -1,6 +1,6 @@
 resource "kubernetes_namespace" "namespace" {
   metadata {
-    name = "ariang"
+    name = local.name
   }
 
   lifecycle {
