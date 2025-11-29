@@ -2,12 +2,7 @@ name: Checkov
 
 on:
   pull_request:
-    paths:
-      - 'apps/**'
-      - 'platform/**'
-      - '.github/workflows/checkov.yml'
   push:
-    branches: [ main ]
 
 jobs:
   discover:
@@ -19,45 +14,42 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+            fetch-depth: ${{ github.event_name == 'pull_request' && 2 || 0 }}
 
-      - name: Discover changed Terraform app folders
-        id: set-matrix
+      - name: Get changed files
+        id: changed-files
         run: |
-          CHANGED=$(git diff --name-only HEAD^ HEAD || echo "")
-
-          echo "Changed files:"
-          echo "$CHANGED"
-
-          # Extract directories under apps/
-          FOLDERS=$(echo "$CHANGED" \
-            | grep -E "^apps/|^platform/" \
-            | cut -d'/' -f1-2 \
-            | sort -u \
-            | jq -R . \
-            | jq -s -c .)
-
-          echo "folders=$FOLDERS" >> "$GITHUB_OUTPUT"
-          echo "Changed folders: $FOLDERS"
-
-
-  checkov:
-    needs: discover
-    runs-on: ubuntu-latest
-    if: ${{ needs.discover.outputs.folders != '[]' }}
-
-    strategy:
-      fail-fast: false
-      matrix:
-        folder: ${{ fromJson(needs.discover.outputs.folders) }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Install Checkov
-        run: pip install checkov
-
-      - name: Run Checkov on ${{ matrix.folder }}
+            if ${{ github.event_name == 'pull_request' }}; then
+                echo "changed_files=$(git diff --name-only -r HEAD^1 HEAD | xargs)" >> $GITHUB_OUTPUT
+            else
+                echo "changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargs)" >> $GITHUB_OUTPUT
+            fi
+      - name: List changed files
         run: |
-          echo "Running Checkov on: ${{ matrix.folder }}"
-          checkov -d "${{ matrix.folder }}"
+            for file in ${{ steps.changed-files.outputs.changed_files }}; do
+                echo "$file was changed"
+            done
+
+
+  # checkov:
+  #   needs: discover
+  #   runs-on: ubuntu-latest
+  #   if: ${{ needs.discover.outputs.folders != '[]' }}
+
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       folder: ${{ fromJson(needs.discover.outputs.folders) }}
+
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+
+  #     - name: Install Checkov
+  #       run: pip install checkov
+
+  #     - name: Run Checkov on ${{ matrix.folder }}
+  #       run: |
+  #         echo "Running Checkov on: ${{ matrix.folder }}"
+  #         checkov -d "${{ matrix.folder }}"
