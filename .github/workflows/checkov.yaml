@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      folders: ${{ steps.set-matrix.outputs.folders }}
+      folders: ${{ steps.folders.outputs.folders }}
 
     steps:
       - name: Checkout code
