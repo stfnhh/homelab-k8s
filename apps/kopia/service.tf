@@ -5,7 +5,7 @@ resource "kubernetes_service" "service" {
   }
 
   spec {
-    selector = { 
+    selector = {
       app = local.name
     }
 

@@ -7,15 +7,15 @@ resource "kubernetes_deployment" "deployment" {
   spec {
     replicas = 1
     selector {
-      match_labels = { 
+      match_labels = {
         app = local.name
       }
     }
 
     template {
       metadata {
-        labels = { 
-          app = local.name 
+        labels = {
+          app = local.name
         }
       }
 
