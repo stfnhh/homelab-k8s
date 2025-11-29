@@ -27,7 +27,7 @@ jobs:
             fi
 
       - name: List changed folders
-        id: folder-list
+        id: folders
         run: |
           dirs=""
 
