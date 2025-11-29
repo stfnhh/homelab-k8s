@@ -16,38 +16,41 @@ jobs:
         with:
           fetch-depth: 0   # <-- required for changed file detection
 
-      - name: Find changed folders
-        id: set
+      - name: Determine changed folders
+        id: folders
         run: |
-          FOLDERS=""
+          echo "Changed files in this push:"
+          CHANGED=$(git diff --name-only HEAD~1 HEAD || true)
+          echo "$CHANGED"
+
+          dirs=""
+
           while IFS= read -r file; do
-            case "$file" in
-              apps/*/*)
-                # Extract apps/<folder>
-                folder=$(echo "$file" | cut -d'/' -f1-2)
-                FOLDERS="$FOLDERS"$'\n'"$folder"
-                ;;
-              platform/*)
-                FOLDERS="$FOLDERS"$'\n'"platform"
-                ;;
-            esac
+            # apps/<folder>/<filename> → apps/<folder>
+            if [[ "$file" == apps/*/* ]]; then
+              folder="${file#apps/}"        # remove leading apps/
+              folder="${folder%%/*}"        # take folder name
+              dirs="$dirs apps/$folder"
+            fi
+
+            # platform/<filename> → platform
+            if [[ "$file" == platform/* ]]; then
+              dirs="$dirs platform"
+            fi
           done <<< "$CHANGED"
 
-          echo "Matched folders:"
-          echo "$FOLDERS"
+          # Dedup + clean empty lines
+          dirs=$(echo "$dirs" | tr ' ' '\n' | sed '/^\s*$/d' | sort -u)
 
-          # Clean empty lines, sort, dedupe
-          FOLDERS=$(echo "$FOLDERS" | sed '/^\s*$/d' | sort -u)
-
-          # Convert to JSON
-          if [ -z "$FOLDERS" ]; then
-            JSON="[]"
+          # Build JSON
+          if [[ -z "$dirs" ]]; then
+            json="[]"
           else
-            JSON=$(echo "$FOLDERS" | jq -R . | jq -s -c .)
+            json=$(echo "$dirs" | jq -R . | jq -s -c .)
           fi
 
-          echo "folders=$JSON" >> "$GITHUB_OUTPUT"
-          echo "Final JSON: $JSON"
+          echo "folders=$json" >> "$GITHUB_OUTPUT"
+          echo "Final JSON: $json"
 
 
 
