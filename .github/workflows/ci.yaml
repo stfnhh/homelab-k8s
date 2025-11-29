@@ -22,11 +22,9 @@ jobs:
       - name: Discover Terraform folders
         id: set-matrix
         run: |
-          dirs=$(ls -d apps/* | jq -R -s -c 'split("\n")[:-1]')
-          # Add platform
-          combined=$(jq -n --argjson apps "$dirs" '$apps + ["platform"]')
-          echo "folders=$combined" >> $GITHUB_OUTPUT
-
+          dirs=$(printf '%s\n' apps/*/ | sed 's:/$::' | jq -R . | jq -s -c .)
+          echo "dirs=$dirs" >> "$GITHUB_OUTPUT"
+          
   checkov:
     needs: discover
     runs-on: ubuntu-latest
