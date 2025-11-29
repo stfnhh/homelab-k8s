@@ -19,29 +19,28 @@ jobs:
       - name: Find changed folders
         id: set
         run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            BASE="${{ github.event.pull_request.base.sha }}"
-          else
-            BASE="${{ github.sha }}~1"
-          fi
-
-          CHANGED=$(git diff --name-only "$BASE" "${{ github.sha }}" || true)
-
-          echo "Changed files:"
-          echo "$CHANGED"
-
-          # Extract only the first directory level under apps/, or 'platform'
-          FOLDERS=$(echo "$CHANGED" \
-            | grep -E '^(apps/|platform/)' || true \
-            | xargs -n1 dirname \
-            | cut -d'/' -f1-2 \
-            | sort -u)
+          FOLDERS=""
+          while IFS= read -r file; do
+            case "$file" in
+              apps/*/*)
+                # Extract apps/<folder>
+                folder=$(echo "$file" | cut -d'/' -f1-2)
+                FOLDERS="$FOLDERS"$'\n'"$folder"
+                ;;
+              platform/*)
+                FOLDERS="$FOLDERS"$'\n'"platform"
+                ;;
+            esac
+          done <<< "$CHANGED"
 
           echo "Matched folders:"
           echo "$FOLDERS"
 
-          # Produce valid JSON
-          if [ -z "$(echo "$FOLDERS" | tr -d '[:space:]')" ]; then
+          # Clean empty lines, sort, dedupe
+          FOLDERS=$(echo "$FOLDERS" | sed '/^\s*$/d' | sort -u)
+
+          # Convert to JSON
+          if [ -z "$FOLDERS" ]; then
             JSON="[]"
           else
             JSON=$(echo "$FOLDERS" | jq -R . | jq -s -c .)
@@ -49,6 +48,7 @@ jobs:
 
           echo "folders=$JSON" >> "$GITHUB_OUTPUT"
           echo "Final JSON: $JSON"
+
 
 
 
