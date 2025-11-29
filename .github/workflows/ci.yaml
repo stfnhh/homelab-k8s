@@ -20,43 +20,64 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Discover changed Terraform folders (apps + platform)
-        id: set-matrix
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+
+    outputs:
+      folders: ${{ steps.out.outputs.folders }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Determine diff range
+        id: range
         run: |
           BEFORE="${{ github.event.before }}"
           AFTER="${{ github.sha }}"
 
-          echo "Diffing commits:"
-          echo "BEFORE=$BEFORE"
-          echo "AFTER=$AFTER"
-
-          # GitHub sometimes sets BEFORE to all zeros on new branches — handle it
-          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
-            echo "No previous commit — scanning all folders"
-            CHANGED=$(find apps -maxdepth 1 -mindepth 1 -type d)
-            CHANGED="$CHANGED"$'\n'"platform"
+          # GH sets BEFORE to all zeros on new branches — no diff available
+          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ] || [ -z "$BEFORE" ]; then
+            echo "no_diff=true" >> $GITHUB_OUTPUT
           else
-            CHANGED=$(git diff --name-only "$BEFORE" "$AFTER" || true)
+            echo "no_diff=false" >> $GITHUB_OUTPUT
+          fi
+
+          echo "before=$BEFORE"
+          echo "after=$AFTER"
+
+      - name: Discover changed Terraform folders (apps + platform)
+        id: out
+        run: |
+          if [ "${{ steps.range.outputs.no_diff }}" = "true" ]; then
+            echo "No previous commit — using full directory scan"
+            CHANGED=$(find apps -maxdepth 1 -mindepth 1 -type d; echo platform)
+          else
+            CHANGED=$(git diff --name-only "${{ github.event.before }}" "${{ github.sha }}" || true)
           fi
 
           echo "Changed files:"
           echo "$CHANGED"
 
-          # Extract the folders (apps/* and platform)
+          # Extract folders under apps/ or platform/
           FOLDERS=$(echo "$CHANGED" \
             | grep -E '^(apps/[^/]+/|platform/)' || true \
             | sed -E 's:^(apps/[^/]+)/.*:\1:; s:^(platform)/.*:\1:' \
-            | sort -u \
-            | jq -R . \
-            | jq -s -c .)
+            | sort -u)
 
-          # If empty, produce "[]" — valid JSON
-          if [ -z "$FOLDERS" ] || [ "$FOLDERS" = "[]" ]; then
-            FOLDERS="[]"
+          echo "Matched folders:"
+          echo "$FOLDERS"
+
+          # Convert to JSON array — guaranteed valid
+          if [ -z "$FOLDERS" ]; then
+            JSON="[]"
+          else
+            JSON=$(echo "$FOLDERS" | jq -R . | jq -s -c .)
           fi
 
-          echo "folders=$FOLDERS" >> "$GITHUB_OUTPUT"
-          echo "Changed folders: $FOLDERS"
+          echo "folders=$JSON" >> "$GITHUB_OUTPUT"
+          echo "Final JSON: $JSON"
+
 
   checkov:
     needs: discover
