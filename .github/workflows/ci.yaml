@@ -59,6 +59,10 @@ jobs:
         folder: ${{ fromJson(needs.discover.outputs.folders) }}
 
     steps:
+      - name: Debug discover output
+        run: |
+          echo "Discover output: '${{ needs.discover.outputs.folders }}'"
+
       - uses: actions/checkout@v4
       - run: pip install checkov
 
