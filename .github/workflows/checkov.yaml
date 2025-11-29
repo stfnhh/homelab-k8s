@@ -91,6 +91,6 @@ jobs:
       - name: Generate Terraform Docs
         uses: terraform-docs/gh-actions@v1
         with:
-          working-dir: ${{ matrix.folder }}
+          working-dir: ${{ matrix.folder }}/
           output-file: README.md
           output-method: inject
