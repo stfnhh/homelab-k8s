@@ -51,7 +51,7 @@ jobs:
   checkov:
     needs: discover
     runs-on: ubuntu-latest
-    if: ${{ needs.discover.outputs.folders != '[]' && needs.discover.outputs.folders != '' }}
+    # if: ${{ needs.discover.outputs.folders != '[]' && needs.discover.outputs.folders != '' }}
 
     strategy:
       fail-fast: false
