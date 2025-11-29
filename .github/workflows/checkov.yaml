@@ -22,8 +22,6 @@ jobs:
           dirs=""
 
           while IFS= read -r file; do
-            [[ -z "$file" ]] && continue
-
             if [[ "$file" == apps/*/* ]]; then
               folder="${file#apps/}"     # remove apps/
               folder="${folder%%/*}"     # take folder name

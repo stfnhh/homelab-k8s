@@ -1,6 +1,9 @@
 resource "kubernetes_deployment" "deployment" {
   # checkov:skip=CKV_K8S_22:read-only root filesystem not compatible
   # test
+  # test
+  # test
+  # test
   metadata {
     name      = "redis"
     namespace = kubernetes_namespace.namespace.metadata[0].name
