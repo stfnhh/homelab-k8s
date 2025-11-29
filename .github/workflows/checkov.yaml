@@ -19,10 +19,6 @@ jobs:
       - name: Determine changed folders
         id: folders
         run: |
-          echo "Changed files in this push:"
-          CHANGED=$(git diff --name-only HEAD~1 HEAD || true)
-          echo "$CHANGED"
-
           dirs=""
 
           while IFS= read -r file; do
@@ -51,9 +47,6 @@ jobs:
 
           echo "folders=$json" >> "$GITHUB_OUTPUT"
           echo "Final JSON: $json"
-
-
-
 
   checkov:
     needs: discover
