@@ -32,9 +32,15 @@ jobs:
           for file in ${{ steps.changed-files.outputs.changed_files }}; do
             dir=$(dirname "$file")
             if [[ "$str" == *"apps/"* ]]; then
-              dir=$(echo "$path" | cut -d'/' -f2-3)
+              dirs="$dirs $(echo "$path" | cut -d'/' -f2-3)"
             fi
-            echo $dir
+            if [[ "$str" == *"platform/"* ]]; then
+              dirs="$dirs platform/"
+            fi
+
+            echo $dirs
+            dirs=$(echo "$dirs" | tr ' ' '\n' | sed '/^\s*$/d' | sort -u)
+            echo $dirs
           done
 
 
