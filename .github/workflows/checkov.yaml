@@ -1,6 +1,6 @@
 name: Checkov
 permissions:
-  contents: read
+  contents: write
 
 on:
   pull_request:
@@ -88,6 +88,9 @@ jobs:
         folder: ${{ fromJson(needs.changes.outputs.folders) }}
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Generate Terraform Docs
         uses: terraform-docs/gh-actions@v1
         with:
