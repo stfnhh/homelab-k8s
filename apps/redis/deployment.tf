@@ -34,7 +34,7 @@ resource "kubernetes_deployment" "deployment" {
           ]
 
           volume_mount {
-            name       = local.name
+            name       = "data"
             mount_path = "/data"
           }
 
@@ -85,7 +85,7 @@ resource "kubernetes_deployment" "deployment" {
         }
 
         volume {
-          name = local.name
+          name = "data"
 
           persistent_volume_claim {
             claim_name = kubernetes_persistent_volume_claim.persistent_volume_claim.metadata[0].name
