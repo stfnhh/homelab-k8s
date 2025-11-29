@@ -49,7 +49,7 @@ jobs:
           echo "Final JSON: $json"
 
   checkov:
-    needs: folders
+    needs: discover
     runs-on: ubuntu-latest
     if: ${{ needs.discover.outputs.folders != '[]' && needs.discover.outputs.folders != '' }}
 
