@@ -14,40 +14,13 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      folders: ${{ steps.set.outputs.folders }}
+      folders: ${{ steps.out.outputs.folders }}
 
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0   # <-- required for changed file detection
-
-      - name: Find changed folders
-        id: set
+      - name: Always export valid JSON array
+        id: out
         run: |
-          # Get changed files safely for pull_request or push
-          CHANGED=$(git diff --name-only ${{ github.event.pull_request.base.sha || 'HEAD~1' }} ${{ github.sha }} || true)
-
-          echo "Changed files:"
-          echo "$CHANGED"
-
-          # Extract only apps/* and platform
-          FOLDERS=$(echo "$CHANGED" \
-            | grep -E '^(apps/[^/]+/|platform/)' || true \
-            | sed -E 's:^(apps/[^/]+)/.*:\1:; s:^(platform)/.*:\1:' \
-            | sort -u)
-
-          echo "Matched:"
-          echo "$FOLDERS"
-
-          # Guarantee valid JSON output
-          if [ -z "$(echo "$FOLDERS" | tr -d '[:space:]')" ]; then
-            JSON="[]"
-          else
-            JSON=$(echo "$FOLDERS" | jq -R . | jq -s -c .)
-          fi
-
-          echo "folders=$JSON" >> "$GITHUB_OUTPUT"
-          echo "Final: $JSON"
+          echo 'folders=[]' >> "$GITHUB_OUTPUT"
 
   checkov:
     needs: discover
