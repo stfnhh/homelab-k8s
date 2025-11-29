@@ -74,3 +74,21 @@ jobs:
       - name: Run Checkov on ${{ matrix.folder }}
         run: |
           checkov -d "${{ matrix.folder }}"
+
+  docs:
+    needs: changes
+    runs-on: ubuntu-latest
+    if: ${{ needs.changes.outputs.folders != '[]' }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        folder: ${{ fromJson(needs.changes.outputs.folders) }}
+
+    steps:
+      - name: Generate Terraform Docs
+        uses: terraform-docs/gh-actions@v1
+        with:
+          working-dir: ${{ matrix.folder }}
+          output-file: README.md
+          output-method: inject
