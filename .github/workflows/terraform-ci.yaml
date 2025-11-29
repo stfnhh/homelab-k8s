@@ -85,6 +85,7 @@ jobs:
 
     strategy:
       fail-fast: false
+      max-parallel: 1
       matrix:
         folder: ${{ fromJson(needs.changes.outputs.folders) }}
 
