@@ -27,22 +27,36 @@ jobs:
             fi
 
       - name: List changed folders
+        id: folder-list
         run: |
           dirs=""
+
           for file in ${{ steps.changed-files.outputs.changed_files }}; do
-            dir=$(dirname "$file")
-            if [[ "$dir" == *"apps/"* ]]; then
-              dirs="$dirs $(echo $path | cut -d'/' -f2-3)"
-            fi
-            if [[ "$dir" == *"platform/"* ]]; then
-              dirs="$dirs platform/"
+            # Normalize path
+            path="$file"
+
+            # apps/<app>/something → apps/<app>
+            if [[ "$path" == apps/*/* ]]; then
+              app_dir=$(echo "$path" | cut -d'/' -f1-2)
+              dirs="$dirs $app_dir"
             fi
 
-            echo $dirs
-            dirs=$(echo "$dirs" | tr ' ' '\n' | sed '/^\s*$/d' | sort -u)
-            echo $dirs
+            # platform/something → platform
+            if [[ "$path" == platform/* ]]; then
+              dirs="$dirs platform"
+            fi
           done
 
+          # Deduplicate, remove empty, sort
+          dirs=$(echo "$dirs" | tr ' ' '\n' | sed '/^\s*$/d' | sort -u)
+
+          echo "Changed directories:"
+          echo "$dirs"
+
+          # Set as output so matrix can consume it
+          echo "folders<<EOF" >> $GITHUB_OUTPUT
+          echo "$dirs" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
 
   # checkov:
