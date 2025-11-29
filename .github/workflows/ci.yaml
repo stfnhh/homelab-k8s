@@ -39,9 +39,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Checkov
-        uses: bridgecrewio/checkov-action@v12
-        with:
-          quiet: true
+        run: pip install checkov
 
       - name: Run Checkov on ${{ matrix.folder }}
         run: |
