@@ -104,16 +104,4 @@ jobs:
           working-dir: ${{ matrix.folder }}/
           output-file: README.md
           output-method: inject
-
-      - name: Commit & push README updates
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-
-          if [[ -n "$(git status --porcelain)" ]]; then
-            git add ${{ matrix.folder }}/README.md
-            git commit -m "docs: update terraform docs in ${{ matrix.folder }}"
-            git push
-          else
-            echo "No changes to commit"
-          fi
+          git-push: true
