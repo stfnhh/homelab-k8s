@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      folders: ${{ steps.set.outputs.folders }}
+      folders: ${{ steps.folders.outputs.folders }}
 
     steps:
       - uses: actions/checkout@v4
@@ -49,9 +49,9 @@ jobs:
           echo "Final JSON: $json"
 
   checkov:
-    needs: discover
+    needs: folders
     runs-on: ubuntu-latest
-    # if: ${{ needs.discover.outputs.folders != '[]' && needs.discover.outputs.folders != '' }}
+    if: ${{ needs.discover.outputs.folders != '[]' && needs.discover.outputs.folders != '' }}
 
     strategy:
       fail-fast: false
