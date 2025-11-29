@@ -1,8 +1,8 @@
 name: Checkov
 
 on:
-  pull_request:
   push:
+    branches: [ main ]
 
 jobs:
   discover:
@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # <-- required for changed file detection
+          fetch-depth: 2
 
       - name: Determine changed folders
         id: folders
@@ -22,25 +22,26 @@ jobs:
           dirs=""
 
           while IFS= read -r file; do
-            # apps/<folder>/<filename> → apps/<folder>
+            [[ -z "$file" ]] && continue
+
             if [[ "$file" == apps/*/* ]]; then
-              folder="${file#apps/}"        # remove leading apps/
-              folder="${folder%%/*}"        # take folder name
+              folder="${file#apps/}"     # remove apps/
+              folder="${folder%%/*}"     # take folder name
               dirs="$dirs apps/$folder"
             fi
 
-            # platform/<filename> → platform
             if [[ "$file" == platform/* ]]; then
               dirs="$dirs platform"
             fi
           done <<< "$CHANGED"
 
-          # Dedup + clean empty lines
           dirs=$(echo "$dirs" | tr ' ' '\n' | sed '/^\s*$/d' | sort -u)
 
-          # Build JSON
+          echo "Resolved folders:"
+          echo "$dirs"
+
           if [[ -z "$dirs" ]]; then
-            json="[]"
+            json='[]'
           else
             json=$(echo "$dirs" | jq -R . | jq -s -c .)
           fi
@@ -51,7 +52,7 @@ jobs:
   checkov:
     needs: discover
     runs-on: ubuntu-latest
-    if: ${{ needs.discover.outputs.folders != '[]' && needs.discover.outputs.folders != '' }}
+    if: ${{ needs.discover.outputs.folders != '[]' }}
 
     strategy:
       fail-fast: false
@@ -62,7 +63,7 @@ jobs:
       - uses: actions/checkout@v4
       - run: pip install checkov
 
-      - name: Run Checkov
+      - name: Run Checkov on folder
         run: |
           echo "Scanning: ${{ matrix.folder }}"
           checkov -d "${{ matrix.folder }}"
