@@ -24,7 +24,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        folder: ${{ fromJson(needs.discover.outputs.folders) }}
+        folder: ${{ fromJson([]) }}
 
     steps:
       - name: Debug discover output
