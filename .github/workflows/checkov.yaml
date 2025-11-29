@@ -31,10 +31,10 @@ jobs:
           dirs=""
           for file in ${{ steps.changed-files.outputs.changed_files }}; do
             dir=$(dirname "$file")
-            if [[ "$str" == *"apps/"* ]]; then
-              dirs="$dirs $(echo "$path" | cut -d'/' -f2-3)"
+            if [[ "$dir" == *"apps/"* ]]; then
+              dirs="$dirs $(echo $path | cut -d'/' -f2-3)"
             fi
-            if [[ "$str" == *"platform/"* ]]; then
+            if [[ "$dir" == *"platform/"* ]]; then
               dirs="$dirs platform/"
             fi
 
