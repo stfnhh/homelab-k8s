@@ -1,6 +1,6 @@
 resource "kubernetes_namespace" "namespace" {
   metadata {
-    name = "filegator"
+    name = "filebrowser"
   }
 
   lifecycle {

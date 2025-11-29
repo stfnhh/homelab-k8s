@@ -1,6 +1,6 @@
 resource "kubernetes_persistent_volume_claim" "persistent_volume_claim" {
   metadata {
-    name      = "filegator-config"
+    name      = "filebrowser-config"
     namespace = kubernetes_namespace.namespace.metadata[0].name
   }
   spec {

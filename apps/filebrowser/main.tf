@@ -3,7 +3,7 @@ terraform {
 
   backend "s3" {
     bucket       = "stfn-tf-state"
-    key          = "homelab/apps/filegator.tfstate"
+    key          = "homelab/apps/filebrowser.tfstate"
     region       = "us-east-1"
     encrypt      = true
     use_lockfile = true

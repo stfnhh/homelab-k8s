@@ -1,12 +1,12 @@
 resource "kubernetes_service" "service" {
   metadata {
-    name      = "filegator"
+    name      = "filebrowser"
     namespace = kubernetes_namespace.namespace.metadata[0].name
   }
 
   spec {
     selector = {
-      app = "filegator"
+      app = "filebrowser"
     }
 
     port {

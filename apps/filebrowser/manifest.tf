@@ -3,14 +3,14 @@ resource "kubernetes_manifest" "manifest" {
     apiVersion = "traefik.io/v1alpha1"
     kind       = "IngressRoute"
     metadata = {
-      name      = "filegator"
+      name      = "filebrowser"
       namespace = kubernetes_namespace.namespace.metadata[0].name
     }
     spec = {
       entryPoints = ["websecure"]
       routes = [
         {
-          match = "Host(`files.${var.domain}`)"
+          match = "Host(`filebrowser.${var.domain}`)"
           kind  = "Rule"
           services = [
             {

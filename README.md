@@ -76,7 +76,7 @@ This cluster is configured to run the following applications & services:
 **Applications**
 
 - **[Ariang](apps/ariang)** - A lightweight multi-protocol & multi-source download utility.
-- **[FileGator](apps/filegator)** - A web-based file manager for self-hosted solutions.
+- **[File Browser](apps/filebrowser)** - A web-based file manager for self-hosted solutions.
 - **[Jellyfin](apps/jellyfin)** - A media server for streaming movies, TV shows, and music.
 - **[Kopia](apps/kopia)** - A fast, secure, deduplicating backup solution for files, servers, and containers.
 - **[Redis](apps/redis)** - An in-memory key-value datastore used for caching, queues, and real-time data.
