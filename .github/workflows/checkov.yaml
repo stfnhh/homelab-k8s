@@ -32,7 +32,8 @@ jobs:
 
           # Extract only the first directory level under apps/, or 'platform'
           FOLDERS=$(echo "$CHANGED" \
-            | grep -E '^(apps/[^/]+/|platform/)' || true \
+            | grep -E '^(apps/|platform/)' || true \
+            | xargs -n1 dirname \
             | cut -d'/' -f1-2 \
             | sort -u)
 
