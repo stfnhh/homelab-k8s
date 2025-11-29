@@ -5,7 +5,7 @@ on:
   push:
 
 jobs:
-  discover:
+  changes:
     runs-on: ubuntu-latest
 
     outputs:
@@ -25,11 +25,34 @@ jobs:
             else
                 echo "changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargs)" >> $GITHUB_OUTPUT
             fi
-      - name: List changed files
+      - name: List changed folders
         run: |
-            for file in ${{ steps.changed-files.outputs.changed_files }}; do
-                echo $(dirname $file)
-            done
+          dirs=""
+          for file in ${{ steps.changed-files.outputs.changed_files }}; do
+            dir=$(dirname "$file")
+
+            # Keep only apps/<folder> and platform
+            if [[ "$dir" == apps/* ]]; then
+              top="apps/${dir#apps/}"   # remove apps/
+              top="${top%%/*}"          # extract first folder
+              dirs="$dirs apps/$top"
+            fi
+
+            if [[ "$dir" == platform ]]; then
+              dirs="$dirs platform"
+            fi
+          done
+
+          # Deduplicate and turn into JSON array
+          if [[ -z "$dirs" ]]; then
+            json="[]"
+          else
+            json=$(echo $dirs | tr ' ' '\n' | sort -u | jq -R . | jq -s -c .)
+          fi
+
+          echo "folders=$json" >> "$GITHUB_OUTPUT"
+          echo "Final JSON: $json"
+
 
 
   # checkov:
