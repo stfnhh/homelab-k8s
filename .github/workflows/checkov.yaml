@@ -53,30 +53,34 @@ jobs:
           echo "Changed directories:"
           echo "$dirs"
 
-          # Set as output so matrix can consume it
-          echo "folders<<EOF" >> $GITHUB_OUTPUT
-          echo "$dirs" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          if [[ -z "$dirs" ]]; then
+            json="[]"
+          else
+            json=$(echo $dirs | tr ' ' '\n' | sort -u | jq -R . | jq -s -c .)
+          fi
+
+          echo "folders=$json" >> "$GITHUB_OUTPUT"
+          echo "Final JSON: $json"
 
 
-  # checkov:
-  #   needs: discover
-  #   runs-on: ubuntu-latest
-  #   if: ${{ needs.discover.outputs.folders != '[]' }}
+  checkov:
+    needs: changes
+    runs-on: ubuntu-latest
+    if: ${{ needs.changes.outputs.folders != '[]' }}
 
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       folder: ${{ fromJson(needs.discover.outputs.folders) }}
+    strategy:
+      fail-fast: false
+      matrix:
+        folder: ${{ fromJson(needs.changes.outputs.folders) }}
 
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-  #     - name: Install Checkov
-  #       run: pip install checkov
+      - name: Install Checkov
+        run: pip install checkov
 
-  #     - name: Run Checkov on ${{ matrix.folder }}
-  #       run: |
-  #         echo "Running Checkov on: ${{ matrix.folder }}"
-  #         checkov -d "${{ matrix.folder }}"
+      - name: Run Checkov on ${{ matrix.folder }}
+        run: |
+          echo "Running Checkov on: ${{ matrix.folder }}"
+          checkov -d "${{ matrix.folder }}"
