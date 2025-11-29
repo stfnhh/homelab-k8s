@@ -15,16 +15,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-            fetch-depth: ${{ github.event_name == 'pull_request' && 2 || 0 }}
+          fetch-depth: ${{ github.event_name == 'pull_request' && 2 || 0 }}
 
       - name: Get changed files
         id: changed-files
         run: |
-            if ${{ github.event_name == 'pull_request' }}; then
-                echo "changed_files=$(git diff --name-only -r HEAD^1 HEAD | xargs)" >> $GITHUB_OUTPUT
-            else
-                echo "changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargs)" >> $GITHUB_OUTPUT
-            fi
+          if ${{ github.event_name == 'pull_request' }}; then
+            echo "changed_files=$(git diff --name-only -r HEAD^1 HEAD | xargs)" >> $GITHUB_OUTPUT
+          else
+            echo "changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargs)" >> $GITHUB_OUTPUT
+          fi
 
       - name: List changed folders
         id: folders
@@ -32,26 +32,19 @@ jobs:
           dirs=""
 
           for file in ${{ steps.changed-files.outputs.changed_files }}; do
-            # Normalize path
             path="$file"
 
-            # apps/<app>/something → apps/<app>
             if [[ "$path" == apps/*/* ]]; then
               app_dir=$(echo "$path" | cut -d'/' -f1-2)
               dirs="$dirs $app_dir"
             fi
 
-            # platform/something → platform
             if [[ "$path" == platform/* ]]; then
               dirs="$dirs platform"
             fi
           done
 
-          # Deduplicate, remove empty, sort
           dirs=$(echo "$dirs" | tr ' ' '\n' | sed '/^\s*$/d' | sort -u)
-
-          echo "Changed directories:"
-          echo "$dirs"
 
           if [[ -z "$dirs" ]]; then
             json="[]"
@@ -60,8 +53,6 @@ jobs:
           fi
 
           echo "folders=$json" >> "$GITHUB_OUTPUT"
-          echo "Final JSON: $json"
-
 
   checkov:
     needs: changes
@@ -82,5 +73,4 @@ jobs:
 
       - name: Run Checkov on ${{ matrix.folder }}
         run: |
-          echo "Running Checkov on: ${{ matrix.folder }}"
           checkov -d "${{ matrix.folder }}"
