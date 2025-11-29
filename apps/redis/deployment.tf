@@ -6,6 +6,8 @@ resource "kubernetes_deployment" "deployment" {
   # test
   # test
   # test
+  # test
+  # test
   metadata {
     name      = "redis"
     namespace = kubernetes_namespace.namespace.metadata[0].name
