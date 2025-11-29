@@ -96,6 +96,11 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Pull latest changes
+        run: |
+          git fetch origin main
+          git pull origin main --rebase
+
       - name: Fix Git safe directory
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
