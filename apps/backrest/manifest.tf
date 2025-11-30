@@ -15,7 +15,7 @@ resource "kubernetes_manifest" "manifest" {
           services = [
             {
               name = kubernetes_service.service.metadata[0].name
-              port = 51515
+              port = 9898
             }
           ]
         }

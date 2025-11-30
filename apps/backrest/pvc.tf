@@ -7,7 +7,7 @@ resource "kubernetes_persistent_volume_claim" "persistent_volume_claim" {
     access_modes = ["ReadWriteOnce"]
     resources {
       requests = {
-        storage = "5Gi"
+        storage = "10Gi"
       }
     }
     storage_class_name = "longhorn"

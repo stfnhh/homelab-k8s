@@ -10,10 +10,8 @@ resource "kubernetes_service" "service" {
     }
 
     port {
-      port        = 51515
-      target_port = 51515
+      port        = 9898
+      target_port = 9898
     }
-
-    type = "ClusterIP"
   }
 }
