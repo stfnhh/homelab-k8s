@@ -23,6 +23,10 @@ resource "kubernetes_deployment" "backrest" {
       }
 
       spec {
+        security_context {
+          fs_group = 1000
+        }
+
         container {
           name              = local.name
           image             = "garethgeorge/backrest:v1.10.1@sha256:1308397161321b3c5aeca8acc6bf26eccb990df385f2532d3ce0eaa8b483dedf"
