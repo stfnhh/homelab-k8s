@@ -28,17 +28,20 @@ resource "kubernetes_deployment" "backrest" {
           image             = "garethgeorge/backrest:v1.10.1@sha256:1308397161321b3c5aeca8acc6bf26eccb990df385f2532d3ce0eaa8b483dedf"
           image_pull_policy = "Always"
 
-          security_context {
-            run_as_user  = 1000
-            run_as_group = 1000
-            fs_group     = 1000
-            capabilities {
-              drop = ["ALL", "NET_RAW"]
-            }
-          }
-
           port {
             container_port = 9898
+          }
+
+          security_context {
+            run_as_non_root           = true
+            run_as_user               = 1000
+            run_as_group              = 1000
+            allow_privilege_escalation = false
+            privileged                = false
+            read_only_root_filesystem = false # Backrest requires write access — already justified.
+            capabilities {
+              drop = ["ALL"]
+            }
           }
 
           resources {

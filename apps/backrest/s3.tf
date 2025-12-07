@@ -1,7 +1,22 @@
 resource "aws_s3_bucket" "s3_bucket" {
+  # checkov:skip=CKV_AWS_144: Cross-region replication is not required for this bucket
+  # checkov:skip=CKV_AWS_21: Versioning not required for this bucket
+  # checkov:skip=CKV_AWS_18: Access logging not required
+  # checkov:skip=CKV2_AWS_62: Event notifications not required
+
   bucket = "ko7i-backrest"
 
   force_destroy = false
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "s3_bucket_server_side_encryption_configuration" {
+  bucket = aws_s3_bucket.s3_bucket.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "aws:kms"
+    }
+  }
 }
 
 resource "aws_s3_bucket_public_access_block" "s3_bucket_public_access_block" {
