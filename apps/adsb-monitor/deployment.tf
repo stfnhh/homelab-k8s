@@ -26,7 +26,7 @@ resource "kubernetes_deployment" "deployment" {
       spec {
         container {
           name              = local.name
-          image             = "ghcr.io/stfnhh/adsb-alarm:v0.2.2@sha256:c44dfdec73165b734690253494e8694e267f074b83c4619c6b1260a241ec348c"
+          image             = "ghcr.io/stfnhh/adsb-alarm:v0.2.3@sha256:421303de34eed1bd3ba6f41a942a32680a1613de7d33b8921cd403e0f193ab89"
           image_pull_policy = "Always"
 
           security_context {
