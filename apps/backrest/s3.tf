@@ -4,12 +4,13 @@ resource "aws_s3_bucket" "s3_bucket" {
   # checkov:skip=CKV_AWS_18: Access logging not required
   # checkov:skip=CKV2_AWS_62: Event notifications not required
 
-  bucket = "ko7i-backrest"
-
+  bucket        = "ko7i-backrest"
   force_destroy = false
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "s3_bucket_server_side_encryption_configuration" {
+  # checkov:skip=CKV_AWS_145: SSE-S3 (AES256) is intentionally used to avoid excessive KMS request costs for high-frequency backup workloads
+
   bucket = aws_s3_bucket.s3_bucket.id
 
   rule {
