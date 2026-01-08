@@ -6,14 +6,13 @@ resource "kubernetes_persistent_volume_claim" "persistent_volume_claim" {
 
   spec {
     access_modes = ["ReadWriteOnce"]
+
+    storage_class_name = "openebs-hostpath"
+
     resources {
       requests = {
-        storage = "10Gi"
+        storage = "5Gi"
       }
     }
-    storage_class_name = "longhorn"
   }
 }
-
-
-

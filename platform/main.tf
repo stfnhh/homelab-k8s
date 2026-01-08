@@ -53,8 +53,8 @@ module "cert_manager" {
   }
 }
 
-module "longhorn" {
-  source = "./modules/longhorn"
+module "openebs" {
+  source = "./modules/openebs"
 
   providers = {
     kubernetes = kubernetes

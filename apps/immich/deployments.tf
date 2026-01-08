@@ -145,6 +145,20 @@ resource "kubernetes_deployment" "immich_machine_learning" {
             }
           }
 
+          volume_mount {
+            name       = "dotcache"
+            mount_path = "/.cache"
+          }
+          volume_mount {
+            name       = "cache"
+            mount_path = "/cache"
+          }
+          volume_mount {
+            name       = "config"
+            mount_path = "/.config"
+          }
+
+
           readiness_probe {
             http_get {
               path = "/"
@@ -183,6 +197,18 @@ resource "kubernetes_deployment" "immich_machine_learning" {
             }
           }
         }
+        volume {
+            name = "dotcache"
+            empty_dir {}
+          }
+        volume {
+            name = "cache"
+            empty_dir {}
+          }
+        volume {
+            name = "config"
+            empty_dir {}
+          }
       }
     }
   }
