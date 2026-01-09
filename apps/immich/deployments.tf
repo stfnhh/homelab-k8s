@@ -198,17 +198,17 @@ resource "kubernetes_deployment" "immich_machine_learning" {
           }
         }
         volume {
-            name = "dotcache"
-            empty_dir {}
-          }
+          name = "dotcache"
+          empty_dir {}
+        }
         volume {
-            name = "cache"
-            empty_dir {}
-          }
+          name = "cache"
+          empty_dir {}
+        }
         volume {
-            name = "config"
-            empty_dir {}
-          }
+          name = "config"
+          empty_dir {}
+        }
       }
     }
   }

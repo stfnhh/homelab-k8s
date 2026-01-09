@@ -11,9 +11,9 @@ resource "helm_release" "release" {
       localprovisioner = {
         enabled = true
         hostpathClass = {
-          enabled = true
-          name    = "openebs-hostpath"
-          basePath = "/mnt/storage"
+          enabled           = true
+          name              = "openebs-hostpath"
+          basePath          = "/mnt/storage"
           reclaimPolicy     = "Retain"
           volumeBindingMode = "WaitForFirstConsumer"
         }
