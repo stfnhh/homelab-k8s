@@ -87,13 +87,13 @@ resource "kubernetes_deployment" "deployment" {
             mount_path = "/aria2/data"
           }
           resources {
-            limits = {
-              cpu    = "500m"
-              memory = "512Mi"
-            }
             requests = {
               cpu    = "250m"
               memory = "256Mi"
+            }
+            limits = {
+              cpu    = "500m"
+              memory = "512Mi"
             }
           }
         }
@@ -101,7 +101,7 @@ resource "kubernetes_deployment" "deployment" {
         volume {
           name = "config"
           persistent_volume_claim {
-            claim_name = kubernetes_persistent_volume_claim.persistent_volume_claim.metadata[0].name
+            claim_name = local.name
           }
         }
 

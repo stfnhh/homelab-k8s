@@ -13,4 +13,8 @@ resource "helm_release" "release" {
 
   timeout = 300
   wait    = true
+
+  depends_on = [
+    kubernetes_secret.secret
+  ]
 }

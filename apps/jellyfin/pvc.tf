@@ -7,7 +7,7 @@ resource "kubernetes_persistent_volume_claim" "persistent_volume_claim" {
   spec {
     access_modes = ["ReadWriteOnce"]
 
-    storage_class_name = "openebs-hostpath"
+    storage_class_name = "local-path"
 
     resources {
       requests = {

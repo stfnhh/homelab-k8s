@@ -22,7 +22,7 @@ resource "kubernetes_deployment" "deployment" {
       spec {
         container {
           name              = local.name
-          image             = "ghcr.io/immich-app/immich-server:v2.4.1@sha256:ec3b1291a8ab988ae03dab2230dc68fd74aec3df56b2eecd852d42630f38a81c"
+          image             = "ghcr.io/immich-app/immich-server:v2.5.2@sha256:7ed45bd71332c46e4e898508d7c2975929642377b9f813566a181aedbb2f71c0"
           image_pull_policy = "Always"
 
           security_context {
@@ -131,7 +131,7 @@ resource "kubernetes_deployment" "immich_machine_learning" {
       spec {
         container {
           name              = "${local.name}-machine-learning"
-          image             = "ghcr.io/immich-app/immich-machine-learning:v2.4.1@sha256:ea0568e8d8898291c32946e48dc68cb4d092d38531c021d359aa3a5eb30a18d9"
+          image             = "ghcr.io/immich-app/immich-machine-learning:v2.5.2@sha256:2a8d45f0282a4c1a71f94500c2e954edc83b23d42b11d5e9dd9e2c60e67774ac"
           image_pull_policy = "Always"
 
           security_context {

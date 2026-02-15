@@ -53,15 +53,6 @@ module "cert_manager" {
   }
 }
 
-module "openebs" {
-  source = "./modules/openebs"
-
-  providers = {
-    kubernetes = kubernetes
-    helm       = helm
-  }
-}
-
 module "rancher" {
   source = "./modules/rancher"
 

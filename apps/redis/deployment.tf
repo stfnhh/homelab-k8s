@@ -67,7 +67,6 @@ resource "kubernetes_deployment" "deployment" {
             failure_threshold     = 5
           }
 
-
           resources {
             requests = {
               cpu    = "25m"
@@ -88,7 +87,7 @@ resource "kubernetes_deployment" "deployment" {
           name = "data"
 
           persistent_volume_claim {
-            claim_name = kubernetes_persistent_volume_claim.persistent_volume_claim.metadata[0].name
+            claim_name = local.name
           }
         }
       }

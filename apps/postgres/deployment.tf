@@ -98,7 +98,7 @@ resource "kubernetes_deployment" "deployment" {
         volume {
           name = "pgdata"
           persistent_volume_claim {
-            claim_name = kubernetes_persistent_volume_claim.persistent_volume_claim.metadata[0].name
+            claim_name = local.name
           }
         }
       }

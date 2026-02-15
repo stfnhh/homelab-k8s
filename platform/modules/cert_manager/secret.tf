@@ -5,7 +5,7 @@ resource "kubernetes_secret" "secret" {
   }
 
   data = {
-    access-key-id     = aws_iam_access_key.iam_access_key.id
-    secret-access-key = aws_iam_access_key.iam_access_key.secret
+    "access-key-id"     = aws_iam_access_key.iam_access_key.id
+    "secret-access-key" = aws_iam_access_key.iam_access_key.secret
   }
 }
