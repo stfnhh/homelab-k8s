@@ -36,9 +36,13 @@ resource "kubernetes_deployment" "deployment" {
           image_pull_policy = "Always"
 
           security_context {
-            run_as_user  = 1000
-            run_as_group = 1000
-            privileged   = true
+            run_as_user                = 1000
+            run_as_group               = 1000
+            allow_privilege_escalation = false
+
+            capabilities {
+              drop = ["ALL"]
+            }
           }
 
           port {
