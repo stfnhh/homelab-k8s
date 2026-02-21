@@ -10,7 +10,7 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | 2.38.0 |
+| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | ~> 2.38 |
 ## Modules
 
 No modules.
@@ -27,7 +27,6 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_domain"></a> [domain](#input\_domain) | DNS domain name | `string` | n/a | yes |
-| <a name="input_nfs_server_ip"></a> [nfs\_server\_ip](#input\_nfs\_server\_ip) | IPv4 address of the NFS server | `string` | n/a | yes |
 ## Outputs
 
 No outputs.
