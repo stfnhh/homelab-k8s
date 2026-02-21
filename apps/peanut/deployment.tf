@@ -88,6 +88,15 @@ resource "kubernetes_deployment" "deployment" {
               memory = "512Mi"
             }
           }
+
+          volume_mount {
+            name       = "config"
+            mount_path = "/config"
+          }
+        }
+        volume {
+          name = "config"
+          empty_dir {}
         }
       }
     }

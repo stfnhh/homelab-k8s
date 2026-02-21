@@ -32,6 +32,7 @@ resource "kubernetes_manifest" "manifest_cluster_issuer" {
       }
     }
   }
+  depends_on = [helm_release.release]
 }
 
 resource "kubernetes_manifest" "manifest_wildcard_certificate" {
@@ -53,4 +54,6 @@ resource "kubernetes_manifest" "manifest_wildcard_certificate" {
       ]
     }
   }
+  depends_on = [helm_release.release]
+
 }

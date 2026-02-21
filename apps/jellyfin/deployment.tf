@@ -9,21 +9,27 @@ resource "kubernetes_deployment" "deployment" {
 
   spec {
     replicas = 1
+
     selector {
       match_labels = {
         app = local.name
       }
     }
+
     template {
       metadata {
         labels = {
           app = local.name
         }
       }
+
       spec {
+
         security_context {
-          fs_group = 1000
+          fs_group            = 1000
+          supplemental_groups = [993, 44]
         }
+
         container {
           name              = local.name
           image             = "jellyfin/jellyfin:10.11@sha256:1edf3f17997acbe139718f252a7d2ded2706762390d787a34204668498dbc5f6"
@@ -32,6 +38,7 @@ resource "kubernetes_deployment" "deployment" {
           security_context {
             run_as_user  = 1000
             run_as_group = 1000
+            privileged   = true
           }
 
           port {
@@ -60,39 +67,53 @@ resource "kubernetes_deployment" "deployment" {
             failure_threshold     = 3
           }
 
+          # Media mounts
           volume_mount {
             name       = "config"
             mount_path = "/config"
           }
+
           volume_mount {
             name       = "movies"
             mount_path = "/data/movies"
           }
+
           volume_mount {
             name       = "music"
             mount_path = "/data/music"
           }
+
           volume_mount {
             name       = "tv"
             mount_path = "/data/tv"
           }
+
+          volume_mount {
+            name       = "dri"
+            mount_path = "/dev/dri"
+          }
+
           resources {
             requests = {
               cpu    = "1000m"
               memory = "2048Mi"
             }
             limits = {
-              cpu    = "1512m"
-              memory = "2560Mi"
+              cpu    = "2000m"
+              memory = "3072Mi"
             }
           }
         }
+
+        # PVC
         volume {
           name = "config"
           persistent_volume_claim {
             claim_name = local.name
           }
         }
+
+        # Media
         volume {
           name = "movies"
           nfs {
@@ -100,6 +121,7 @@ resource "kubernetes_deployment" "deployment" {
             path   = "/var/nfs/shared/Media/movies"
           }
         }
+
         volume {
           name = "music"
           nfs {
@@ -107,11 +129,21 @@ resource "kubernetes_deployment" "deployment" {
             path   = "/var/nfs/shared/Media/music"
           }
         }
+
         volume {
           name = "tv"
           nfs {
             server = var.nfs_server_ip
             path   = "/var/nfs/shared/Media/tv"
+          }
+        }
+
+        # 🔥 Host GPU device
+        volume {
+          name = "dri"
+          host_path {
+            path = "/dev/dri"
+            type = "Directory"
           }
         }
       }

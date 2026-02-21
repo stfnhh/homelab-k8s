@@ -6,7 +6,7 @@ resource "kubernetes_endpoints" "endpoints" {
 
   subset {
     address {
-      ip = var.nfs_server_ip
+      ip = var.server_ip
     }
 
     port {

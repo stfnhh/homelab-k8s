@@ -33,7 +33,11 @@ resource "kubernetes_deployment" "deployment" {
 
           readiness_probe {
             exec {
-              command = ["/usr/bin/pg_isready", "-U", "$(POSTGRES_USER)"]
+              command = [
+                "/bin/sh",
+                "-c",
+                "pg_isready -U \"$POSTGRES_USER\""
+              ]
             }
             initial_delay_seconds = 5
             period_seconds        = 10
@@ -43,7 +47,11 @@ resource "kubernetes_deployment" "deployment" {
 
           liveness_probe {
             exec {
-              command = ["/usr/bin/pg_isready", "-U", "$(POSTGRES_USER)"]
+              command = [
+                "/bin/sh",
+                "-c",
+                "pg_isready -U \"$POSTGRES_USER\""
+              ]
             }
             initial_delay_seconds = 30
             period_seconds        = 10
@@ -85,7 +93,7 @@ resource "kubernetes_deployment" "deployment" {
             }
             limits = {
               cpu    = "1"
-              memory = "1Gi"
+              memory = "1.5Gi"
             }
           }
 

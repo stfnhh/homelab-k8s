@@ -4,7 +4,7 @@ resource "helm_release" "release" {
   chart            = "cert-manager"
   version          = "v1.13.0"
   namespace        = "cert-manager"
-  create_namespace = true
+  create_namespace = false
 
   set = [{
     name  = "installCRDs"

@@ -58,7 +58,6 @@ resource "kubernetes_deployment" "deployment" {
             failure_threshold     = 5
           }
 
-
           env {
             name  = "REDIS_HOSTNAME"
             value = "redis.redis.svc.cluster.local"
